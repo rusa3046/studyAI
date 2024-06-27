@@ -3,20 +3,20 @@ import axios from 'axios';
 
 const UploadDocument = ({ apiUrl, setOutput }) => {
     const [documentTitle, setDocumentTitle] = useState('');
-    const [file, setFile] = useState(null);
+    const [documentFile, setDocumentFile] = useState(null);
     const [folderName, setFolderName] = useState('');
 
-    const handleUploadDocument = async () => {
-        if (!documentTitle || !file || !folderName) {
-            alert('Please enter all fields');
+    const handleUpload = async () => {
+        if (!documentTitle || !documentFile || !folderName) {
+            alert('Please fill in all fields');
             return;
         }
 
         const reader = new FileReader();
         reader.onload = async () => {
             const base64File = reader.result.split(',')[1];
-            const fileType = file.type || 'application/octet-stream';
-            const fileName = file.name;
+            const fileType = documentFile.type || 'application/octet-stream';
+            const fileName = documentFile.name;
 
             try {
                 const response = await axios.post(`${apiUrl}/uploadDocument`, {
@@ -27,29 +27,21 @@ const UploadDocument = ({ apiUrl, setOutput }) => {
                     folderName
                 });
 
-                if (response && response.data) {
-                    setOutput(JSON.stringify(response.data, null, 2));
-                } else {
-                    setOutput('Error: No response data');
-                }
+                setOutput(response.data.message);
             } catch (error) {
-                if (error.response && error.response.data) {
-                    setOutput(JSON.stringify(error.response.data, null, 2));
-                } else {
-                    setOutput(`Error: ${error.message}`);
-                }
+                setOutput('Error uploading document');
             }
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(documentFile);
     };
 
     return (
         <div>
             <h2>Upload Document</h2>
             <input type="text" value={documentTitle} onChange={(e) => setDocumentTitle(e.target.value)} placeholder="Document Title" />
-            <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+            <input type="file" onChange={(e) => setDocumentFile(e.target.files[0])} />
             <input type="text" value={folderName} onChange={(e) => setFolderName(e.target.value)} placeholder="Folder Name" />
-            <button onClick={handleUploadDocument}>Upload Document</button>
+            <button onClick={handleUpload}>Upload Document</button>
         </div>
     );
 };
