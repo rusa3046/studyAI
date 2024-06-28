@@ -155,7 +155,7 @@ function chunkDocument(documentContent) {
 }
 
 async function summarizeDocument(documentContent) {
-    const OPENAI_API_KEY =;
+    const OPENAI_API_KEY = ;
     if (!OPENAI_API_KEY) {
         throw new Error("OPENAI_API_KEY environment variable is not set");
     }
